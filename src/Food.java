@@ -17,7 +17,7 @@ public class Food {
 
 
     }
-    public void generateX(){
+    public void generateX(){ //qwerty
         randX = randNum.nextInt((WIDTH/50))*50;
 
     }

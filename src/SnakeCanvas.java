@@ -100,7 +100,7 @@ public class SnakeCanvas extends Canvas
          {
             // GAME OVER SCREEN GOES HERE
             //maybe add play again method
-            //System.out.println("GAMEOVER");
+            System.out.println("GAMEOVER");
             //restart the game. set boolean to true
          }
       }

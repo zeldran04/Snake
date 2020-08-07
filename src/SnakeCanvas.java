@@ -19,22 +19,22 @@ public class SnakeCanvas extends Canvas
 {
    AnimationHandler ah = new AnimationHandler();
    GraphicsContext gc = getGraphicsContext2D();
-   
+
    private int time;
    private int speed = 10;
    private Snake snake;
    private SnakeBody snakeBody; //made to access x and y (Corn WARNED me) 
-   private SnakeLogic snakeLogic = new SnakeLogic();   
+   private SnakeLogic snakeLogic = new SnakeLogic();
    private Food food = new Food(600,600);
-    
-   public SnakeCanvas(Snake snake) 
+
+   public SnakeCanvas(Snake snake)
    {
       this.snake = snake;
-      setWidth(600);     
+      setWidth(600);
       setHeight(600);
 
       ah.start();  //start the animation
-                        
+
       draw();
    }
 
@@ -43,9 +43,11 @@ public class SnakeCanvas extends Canvas
       gc.clearRect(0,0,600,600);
       gc.setFill(Color.BLACK);
       gc.fillRect(0,0,600,600);//create the black background
-      
+
+
       drawFood();
-      
+
+
       SnakeBody current = snake.getTail();
       //gc.setFill(Color.GREEN);
       while(current != null)
@@ -57,33 +59,39 @@ public class SnakeCanvas extends Canvas
          current = current.getNext();
       }
    }
-   
+
    public void drawFood()
    {
       gc.setFill(Color.BLUE);
+      gc.fillRect(food.getLocationX(),food.getLocationY(),50,50);
+   }
+   public void newFood()
+   {
+
       food.generateX();
       food.generateY();
-      gc.fillRect(food.getLocationX(),food.getLocationY(),50,50);
+
    }
 
    public class AnimationHandler extends AnimationTimer
    {
       public void handle(long currentTimeInSeconds)
-      {  
+      {
          if(snakeLogic.didSnakeEatFood(food, snake))
          {
             snake.growSnakeBody();
             snake.moveSnake(snake.getDirection());
             speed -= .3;
+            newFood();
          }
          else if(!snakeLogic.didSnakeCollide(snake))
          {
             time += 1;
-            
+
             if(time == speed)  //time should decrease when you eat a food
             {
-               snake.moveSnake(snake.getDirection()); 
-               System.out.println(snake.getHead().getXCoordinate()+".."+snake.getHead().getYCoordinate());          
+               snake.moveSnake(snake.getDirection());
+               System.out.println(snake.getHead().getXCoordinate()+".."+snake.getHead().getYCoordinate());
                draw();
                time = 0;
             }

@@ -1,10 +1,5 @@
-import java.awt.Graphics;
-import java.awt.Image;
-import java.util.Iterator;
-import java.util.Random;
-import java.util.Set;
 
-import javax.swing.ImageIcon;
+import java.util.Random;
 
 public class Food {
     private int WIDTH;
@@ -17,6 +12,9 @@ public class Food {
         WIDTH = width;
         HEIGHT = height;
         randNum = new Random();
+        randX = 200;
+        randY = 200;
+
 
     }
     public void generateX(){

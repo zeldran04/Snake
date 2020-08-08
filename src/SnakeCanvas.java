@@ -1,5 +1,6 @@
 import javafx.application.*;
 import javafx.event.*;
+import javafx.scene.text.*;
 import javafx.stage.*;
 import javafx.scene.canvas.*;
 import javafx.scene.paint.*;
@@ -14,9 +15,25 @@ import java.util.*;
 import java.net.*;
 import javafx.application.*;
 import javafx.geometry.*;
+import javafx.scene.text.Text;
+import javafx.scene.paint.Color;
+import java.io.FileWriter;
+import java.io.IOException;
 
-public class SnakeCanvas extends Canvas
-{
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.Reader;
+import java.io.IOException;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+
+public class SnakeCanvas extends Canvas {
    AnimationHandler ah = new AnimationHandler();
    GraphicsContext gc = getGraphicsContext2D();
 
@@ -25,10 +42,14 @@ public class SnakeCanvas extends Canvas
    private Snake snake;
    private SnakeBody snakeBody; //made to access x and y (Corn WARNED me) 
    private SnakeLogic snakeLogic = new SnakeLogic();
-   private Food food = new Food(600,600);
+   private Food food = new Food(600, 600);
+   Text text = new Text();
+   public int score = 0;
+   public int newScore;
+   public int finalScore;
+   public long Highscore;
 
-   public SnakeCanvas(Snake snake)
-   {
+   public SnakeCanvas(Snake snake) {
       this.snake = snake;
       setWidth(600);
       setHeight(600);
@@ -38,12 +59,56 @@ public class SnakeCanvas extends Canvas
       draw();
    }
 
+   public void writeJSON() {
+      JSONObject obj = new JSONObject();
+      obj.put("score", score);
+
+
+      try (FileWriter file = new FileWriter("roomTemps.json")) {
+         file.write(obj.toJSONString());
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
+
+      System.out.print(obj);
+
+   }
+
+
+   public void readJSON() {
+      JSONParser parser = new JSONParser();
+
+      try (Reader reader = new FileReader("roomTemps.json")) {
+
+         JSONObject jsonObject = (JSONObject) parser.parse(reader);
+         //System.out.println(jsonObject);
+
+         Highscore = (Long) jsonObject.get("score");
+         //System.out.println(Highscore);
+
+
+      } catch (IOException e) {
+         e.printStackTrace();
+      } catch (ParseException e) {
+         e.printStackTrace();
+      }
+
+
+
+   }
+
+
    public void draw()
    {
       gc.clearRect(0,0,600,600);
       gc.setFill(Color.BLACK);
       gc.fillRect(0,0,600,600);//create the black background
 
+      gc.setFill(Color.WHITE);
+      gc.setFont(new Font("", 30));
+      gc.fillText("Score: " + (score), 10, 30);
+      readJSON();
+      gc.fillText("Highscore: " + (Highscore), 10, 70);
 
       drawFood();
 
@@ -52,7 +117,7 @@ public class SnakeCanvas extends Canvas
       //gc.setFill(Color.GREEN);
       while(current != null)
       {
-         gc.setFill(Color.GREEN);
+         gc.setFill(Color.BROWN);
          gc.fillRect(current.getXCoordinate(),current.getYCoordinate(),50,50);
          gc.setFill(Color.WHITE);
          gc.fillRect(current.getXCoordinate()+15,current.getYCoordinate()+15,20,20);
@@ -72,6 +137,10 @@ public class SnakeCanvas extends Canvas
       food.generateY();
 
    }
+   public void getShowText(int gstScore){
+      this.newScore = gstScore;
+   }
+
 
    public class AnimationHandler extends AnimationTimer
    {
@@ -83,6 +152,8 @@ public class SnakeCanvas extends Canvas
             snake.moveSnake(snake.getDirection());
             speed -= .3;
             newFood();
+            score += 100;
+
          }
          else if(!snakeLogic.didSnakeCollide(snake))
          {
@@ -91,18 +162,20 @@ public class SnakeCanvas extends Canvas
             if(time == speed)  //time should decrease when you eat a food
             {
                snake.moveSnake(snake.getDirection());
-               System.out.println(snake.getHead().getXCoordinate()+".."+snake.getHead().getYCoordinate());
+               //System.out.println(snake.getHead().getXCoordinate()+".."+snake.getHead().getYCoordinate());
                draw();
                time = 0;
             }
          }
          else
          {
-            // GAME OVER SCREEN GOES HERE
-            //maybe add play again method
-            System.out.println("GAMEOVER");
-            //restart the game. set boolean to true
+            readJSON();
+            if (score > Highscore){
+               writeJSON();
+            }
+            }
          }
       }
+
    }
-}
+

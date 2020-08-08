@@ -5,7 +5,6 @@ public class SnakeBody
    private int xCoordinate; 
    private int yCoordinate;
    private SnakeBody next;
-   
    public SnakeBody()  //when game starts we create this head
    {
       xCoordinate = 100;

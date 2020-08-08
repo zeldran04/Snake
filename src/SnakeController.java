@@ -55,7 +55,7 @@ public class SnakeController
          
            //MOVE THE SNAKE
            snake.changeDirection(direction);
-           System.out.println(snake.getHead().getXCoordinate()+".."+snake.getHead().getYCoordinate());           
+           //System.out.println(snake.getHead().getXCoordinate()+".."+snake.getHead().getYCoordinate());
        }
    }
 
